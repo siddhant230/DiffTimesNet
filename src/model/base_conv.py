@@ -17,14 +17,18 @@ class ConvBlock(nn.Module):
 
 
 class Net(nn.Module):
-    def __init__(self, input_channels=50, output_channels=128):
+    def __init__(self, input_channels=50, out_channels=64):
         super().__init__()
-        self.conv1 = nn.Conv2d(input_channels, 64, 5)
-        self.conv2 = nn.Conv2d(64, output_channels, 5)
+        self.conv1 = nn.Conv2d(input_channels, input_channels*2, 3, padding=1)
+        self.conv2 = nn.Conv2d(
+            input_channels*2, input_channels*4, 3, padding=1)
+        self.conv3 = nn.Conv2d(input_channels*4, out_channels, 3, padding=1)
 
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+
         return x
 
 
