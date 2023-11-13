@@ -18,8 +18,8 @@ class SirenBlock(nn.Module):
         net.append(
             SirenLayer(
                 in_features=1,
+                kernel_size=window_length,
                 out_features=max_num_periods,
-                kernel_size=window_length
             )
         )
         self.model = nn.Sequential(*net)
@@ -42,6 +42,6 @@ if __name__ == '__main__':
 
     max_num_periods = 64
     siren = SirenBlock(max_num_periods=max_num_periods,
-                       window_length=T//max_num_periods)
+                       window_length=(T//max_num_periods)+1)
     y = siren(x)
     print(f"SIREN : {x.shape} -> {y.shape}")
