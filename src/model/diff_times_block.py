@@ -7,7 +7,7 @@ from base_conv import Net, ConvBlock
 from aggregator import Aggregator
 
 
-class ResidualBlock(nn.Module):
+class DiffTimesBlock(nn.Module):
     def __init__(
         self,
         input_channels=50,
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     x = torch.zeros((bs, ch, T))
     print(x.shape)
-    residual_block = ResidualBlock(
+    residual_block = DiffTimesBlock(
         T=1200,
         input_channels=50,
         max_num_periods=64,

@@ -2,10 +2,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from residual_block import ResidualBlock
+from model.diff_times_block import DiffTimesBlock
 
 
-class ResNet(nn.Module):
+class DiffTimesNet(nn.Module):
     def __init__(self, in_channels=50,
                  hidden_channels=64,
                  max_num_periods=9,
@@ -14,10 +14,10 @@ class ResNet(nn.Module):
 
         super().__init__()
         reduction_factor = reduction_factor
-        resnet = []
+        diff_time_blocks = []
         for _ in range(num_res_blocks):
-            resnet.append(
-                ResidualBlock(
+            diff_time_blocks.append(
+                DiffTimesBlock(
                     input_channels=in_channels,
                     max_num_periods=max_num_periods,
                     out_channels=hidden_channels,
@@ -27,10 +27,12 @@ class ResNet(nn.Module):
             )
             max_num_periods = max_num_periods-(reduction_factor*2)
 
-        self.resnet = nn.Sequential(*resnet)
+        self.model = nn.Sequential(*diff_time_blocks)
 
     def forward(self, x):
-        x = self.resnet(x)
+        x = x.permute(0, 2, 1)  # (B, T, C) -> (B, C, T)
+        x = self.model(x)
+        x = x.permute(0, 1, 2)  # (B, C, T) -> (B, T, C)
         return x
 
 
@@ -48,10 +50,10 @@ if __name__ == "__main__":
     reduction_factor = 1
     max_num_periods = (num_res_blocks*(2*reduction_factor))+1
 
-    resnet_obj = ResNet(in_channels=in_channels,
-                        hidden_channels=hidden_channels,
-                        max_num_periods=max_num_periods,
-                        num_res_blocks=num_res_blocks)
+    resnet_obj = DiffTimesNet(in_channels=in_channels,
+                              hidden_channels=hidden_channels,
+                              max_num_periods=max_num_periods,
+                              num_res_blocks=num_res_blocks)
 
     y = resnet_obj(x)
     print(y.shape)
