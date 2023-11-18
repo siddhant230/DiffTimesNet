@@ -2,18 +2,24 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from src.model.utilities_model import Inception_Block_V1
+
 
 class ConvBlock(nn.Module):
-    def __init__(self, input_channels=50):
+    def __init__(self, input_channels=50, out_channels=64):
         super().__init__()
         self.input_channels = input_channels
-        self.model = torch.hub.load('pytorch/vision:v0.10.0',
-                                    'inception_v3', pretrained=True)
-        self.model.conv1 = nn.Conv2d(input_channels, 64, kernel_size=7,
-                                     stride=2, padding=3, bias=False)
+
+        self.conv = nn.Sequential(
+            Inception_Block_V1(input_channels, out_channels,
+                               num_kernels=6),
+            nn.GELU(),
+            Inception_Block_V1(out_channels, input_channels,
+                               num_kernels=6)
+        )
 
     def forward(self, x):
-        return self.model(x)
+        return self.conv(x)
 
 
 class Net(nn.Module):

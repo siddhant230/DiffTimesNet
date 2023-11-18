@@ -23,19 +23,18 @@ class SirenLayer(nn.Module):
             out_features,
             bias=True,
             is_first=False,
-            omega=30,
-            kernel_size=3, stride=1,
+            omega=30, padding=0,
+            kernel_size=3, stride=10,
             custom_init_function_=None,
     ):
         super().__init__()
-        assert kernel_size % 2
-
         self.omega = omega
-        self.padding = (kernel_size-1)//2
+        self.padding = padding
+        self.stride = stride
         self.out_features = out_features
         self.linear = nn.Conv1d(in_features, out_features,
                                 kernel_size=kernel_size, bias=bias,
-                                stride=stride, padding=self.padding)
+                                stride=stride, padding=padding)
 
         if custom_init_function_ is None:
             paper_init_(self.linear.weight, is_first=is_first, omega=omega)
@@ -43,6 +42,5 @@ class SirenLayer(nn.Module):
             custom_init_function_(self.linear.weight)
 
     def forward(self, x):
-
         out = torch.sin(self.omega * self.linear(x))
         return out
