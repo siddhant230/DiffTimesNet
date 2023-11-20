@@ -7,7 +7,7 @@ from model.diff_times_block import DiffTimesBlock
 
 class DiffTimesNet(nn.Module):
     def __init__(self, in_channels=50,
-                 hidden_channels=64,
+                 out_channels=64,
                  max_num_periods=9,
                  num_res_blocks=4,
                  reduction_factor=1):
@@ -20,7 +20,7 @@ class DiffTimesNet(nn.Module):
                 DiffTimesBlock(
                     input_channels=in_channels,
                     max_num_periods=max_num_periods,
-                    out_channels=hidden_channels,
+                    out_channels=out_channels,
                     agg_channels=max_num_periods,
                     use_1x1conv=False
                 )
@@ -45,15 +45,25 @@ if __name__ == "__main__":
     print(x.shape)
 
     in_channels = 32
-    hidden_channels = 64
+    out_channels = 64
     num_res_blocks = 5
     reduction_factor = 1
     max_num_periods = (num_res_blocks*(2*reduction_factor))+1
 
     resnet_obj = DiffTimesNet(in_channels=in_channels,
-                              hidden_channels=hidden_channels,
+                              out_channels=out_channels,
                               max_num_periods=max_num_periods,
                               num_res_blocks=num_res_blocks)
+
+    """
+    as per convention in TimesNet repo:
+    
+    self.max_num_periods = 64
+    self.model = DiffTimesNet(in_channels=configs.d_model,
+                                out_channels=configs.d_ff,
+                                max_num_periods=self.max_num_periods,
+                                num_res_blocks=configs.e_layers)
+    """
 
     y = resnet_obj(x)
     print(y.shape)
