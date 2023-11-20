@@ -10,6 +10,7 @@ class DiffTimesNet(nn.Module):
                  out_channels=64,
                  max_num_periods=9,
                  num_res_blocks=4,
+                 siren_depth=3,
                  reduction_factor=1):
 
         super().__init__()
@@ -48,21 +49,25 @@ if __name__ == "__main__":
     out_channels = 64
     num_res_blocks = 5
     reduction_factor = 1
+    siren_depth = 3
     max_num_periods = (num_res_blocks*(2*reduction_factor))+1
 
     resnet_obj = DiffTimesNet(in_channels=in_channels,
                               out_channels=out_channels,
                               max_num_periods=max_num_periods,
+                              siren_depth=siren_depth,
                               num_res_blocks=num_res_blocks)
 
     """
     as per convention in TimesNet repo:
     
     self.max_num_periods = 64
+    self.siren_depth = 3
     self.model = DiffTimesNet(in_channels=configs.d_model,
                                 out_channels=configs.d_ff,
                                 max_num_periods=self.max_num_periods,
-                                num_res_blocks=configs.e_layers)
+                                num_res_blocks=configs.e_layers,
+                                siren_depth=self.siren_depth)
     """
 
     y = resnet_obj(x)
