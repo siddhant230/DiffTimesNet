@@ -7,20 +7,21 @@ from model.diff_times_block import DiffTimesBlock
 
 class DiffTimesNet(nn.Module):
     def __init__(self, in_channels=50,
-                 hidden_channels=64,
+                 out_channels=64,
                  max_num_periods=9,
                  num_res_blocks=4,
                  reduction_factor=1):
 
         super().__init__()
         reduction_factor = reduction_factor
+        max_num_periods = (num_res_blocks*(2*reduction_factor))+1
         diff_time_blocks = []
         for _ in range(num_res_blocks):
             diff_time_blocks.append(
                 DiffTimesBlock(
                     input_channels=in_channels,
                     max_num_periods=max_num_periods,
-                    out_channels=hidden_channels,
+                    out_channels=out_channels,
                     agg_channels=max_num_periods,
                     use_1x1conv=False
                 )
