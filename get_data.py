@@ -35,7 +35,7 @@ def save_response_content(response, destination):
 def unzip_and_save(saved_file_path, target_path):
     z = zipfile.ZipFile(io.BytesIO(open(saved_file_path, "rb").read()))
     z.extractall(target_path)
-
+    os.replace("all_datasets", "dataset")
 
 def main(data_id, target_path):
     destination = "out.zip"
