@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from src.model.siren_model.layer import SirenLayer
+from models.DiffTimesNet.src.model.siren_model.layer import SirenLayer
 
 
 class SirenBlock(nn.Module):

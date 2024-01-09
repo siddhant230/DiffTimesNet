@@ -2,9 +2,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from siren_model.siren import SirenBlock
-from base_conv import Net, ConvBlock
-from aggregator import Aggregator
+from models.DiffTimesNet.src.model.siren_model.siren import SirenBlock
+from models.DiffTimesNet.src.model.base_conv import Net, ConvBlock
+from models.DiffTimesNet.src.model.aggregator import Aggregator
 
 
 class DiffTimesBlock(nn.Module):

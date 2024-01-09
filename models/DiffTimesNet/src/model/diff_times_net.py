@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from model.diff_times_block import DiffTimesBlock
+from models.DiffTimesNet.src.model.diff_times_block import DiffTimesBlock
 
 
 class DiffTimesNet(nn.Module):

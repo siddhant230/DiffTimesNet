@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from src.model.utilities_model import Inception_Block_V1
+from models.DiffTimesNet.src.model.utilities_model.inception import Inception_Block_V1
 
 
 class ConvBlock(nn.Module):

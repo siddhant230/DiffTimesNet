@@ -192,9 +192,12 @@ class Model(nn.Module):
     def classification(self, x_enc, x_mark_enc):
         # embedding
         enc_out = self.enc_embedding(x_enc, None)  # [B,T,C]
+
         # TimesNet
-        for i in range(self.layer):
-            enc_out = self.layer_norm(self.model[i](enc_out))
+        # for i in range(self.layer):
+        enc_out = self.model(enc_out)
+        enc_out = enc_out.permute(0, 2, 1)
+        enc_out = self.layer_norm(enc_out)
 
         # Output
         # the output transformer encoder/decoder embeddings don't include non-linearity
