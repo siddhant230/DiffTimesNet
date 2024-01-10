@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from models.DiffTimesNet.src.model.siren_model.siren import SirenBlock
 from models.DiffTimesNet.src.model.base_conv import Net, ConvBlock
@@ -29,12 +30,20 @@ class DiffTimesBlock(nn.Module):
             self.conv3 = nn.Conv1d(input_channels, out_channels,
                                    kernel_size=1)
 
+    def pad_sequence_util(self, seq, max_len):
+        delta = max_len - seq.shape[-1]
+        seq = F.pad(input=seq, pad=(0, delta, 0, 0), mode='constant', value=0)
+        return seq
+
     def forward(self, x):
         B, N, T = x.shape
 
         y = self.sirenblock(x)
         y = self.conv_net(y)
         y = self.agg(y)
+        x = torch.zeros((16, 64, 62))
+        y = torch.zeros((16, 64, 42))
+        y = self.pad_sequence_util(y, x.shape[-1])
         y = y[:, :, :T]
         y = x + y
         return y
