@@ -41,8 +41,6 @@ class DiffTimesBlock(nn.Module):
         y = self.sirenblock(x)
         y = self.conv_net(y)
         y = self.agg(y)
-        x = torch.zeros((16, 64, 62))
-        y = torch.zeros((16, 64, 42))
         y = self.pad_sequence_util(y, x.shape[-1])
         y = y[:, :, :T]
         y = x + y
