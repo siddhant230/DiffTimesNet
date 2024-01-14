@@ -43,9 +43,7 @@ class LargeConv(nn.Module):
             nn.GELU(),
             Inception_Block_V1(hidden_channels*4, out_channels,
                                num_kernels=6),
-            nn.GELU(),
-            Inception_Block_V1(out_channels, input_channels,
-                               num_kernels=6)
+            nn.GELU()
         )
 
     def forward(self, x):
@@ -64,6 +62,18 @@ class ConvBlock(nn.Module):
             Inception_Block_V1(out_channels, input_channels,
                                num_kernels=6)
         )
+
+    def forward(self, x):
+        x = self.backbone(x)
+        return self.conv(x)
+
+
+class ConvBlock_exp5(nn.Module):
+    def __init__(self, input_channels=50, out_channels=64):
+        super().__init__()
+        self.input_channels = input_channels
+        self.backbone = BaseNet(input_channels, out_channels)
+        self.conv = LargeConv(input_channels, out_channels)
 
     def forward(self, x):
         x = self.backbone(x)
