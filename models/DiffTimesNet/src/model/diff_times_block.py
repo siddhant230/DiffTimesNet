@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from models.DiffTimesNet.src.model.siren_model.siren import SirenBlock
-from models.DiffTimesNet.src.model.base_conv import Net, ConvBlock
+from models.DiffTimesNet.src.model.base_conv import BaseNet, ConvBlock
 from models.DiffTimesNet.src.model.aggregator import Aggregator
 
 
@@ -23,7 +23,7 @@ class DiffTimesBlock(nn.Module):
                                      window_length=max_num_periods,
                                      num_layers=num_siren_depth)
 
-        self.conv_net = ConvBlock(input_channels, out_channels)
+        self.conv_net = BaseNet(input_channels, out_channels)
         self.agg = Aggregator(max_num_periods, output_dim=agg_channels)
         self.conv3 = None
         if use_1x1conv:
