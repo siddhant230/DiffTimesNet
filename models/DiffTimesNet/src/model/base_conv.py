@@ -29,13 +29,16 @@ class BaseNet(nn.Module):
         self.conv2 = nn.Conv2d(
             input_channels*2, input_channels*4, 3, padding=1)
         self.conv3 = nn.Conv2d(input_channels*4, out_channels, 3, padding=1)
-        self.projection = nn.Conv2d(out_channels, input_channels, 1)
+        self.projection1 = nn.Conv2d(out_channels, input_channels, 1)
+        self.projection2 = nn.Conv2d(out_channels, input_channels, 1)
 
     def forward(self, x):
         x = F.relu(self.conv1(x))
         x = F.relu(self.conv2(x))
         x = F.relu(self.conv3(x))
-        x = self.projection(x)
+        q = F.softmax(self.projection1(x))
+        x = self.projection2(x)
+        x = x*q
         return x
 
 

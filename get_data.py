@@ -1,5 +1,8 @@
-import requests, zipfile, io
+import requests
+import zipfile
+import io
 import os
+
 
 def download_file_from_google_drive(id, destination):
     URL = "https://docs.google.com/uc?export=download&confirm=1"
@@ -32,22 +35,24 @@ def save_response_content(response, destination):
             if chunk:  # filter out keep-alive new chunks
                 f.write(chunk)
 
+
 def unzip_and_save(saved_file_path, target_path):
     z = zipfile.ZipFile(io.BytesIO(open(saved_file_path, "rb").read()))
     z.extractall(target_path)
     os.replace("all_datasets", "dataset")
 
+
 def main(data_id, target_path):
-    destination = "out.zip"
-    print(f"dowload {data_id} to {destination}")
-    download_file_from_google_drive(data_id, destination)
+    destination = "/content/drive/MyDrive/Timesnet_data/Copy of all_datasets.zip"
+    # print(f"dowload {data_id} to {destination}")
+    # download_file_from_google_drive(data_id, destination)
     print(f"unzipping and saving {destination}")
     unzip_and_save(destination, target_path)
-    print(f"Remove {destination}")
-    os.remove(destination)
+    # print(f"Remove {destination}")
+    # os.remove(destination)
 
 
 if __name__ == "__main__":
-    data_urls_zip_id = "1pmXvqWsfUeXWCMz5fqsP8WLKXR5jxY8z"
+    data_urls_zip_id = "1_fJnsS0OUcx5Z8pXep8_Csp4-A5nSXTr"
     target_path = "."
     main(data_id=data_urls_zip_id, target_path=target_path)
