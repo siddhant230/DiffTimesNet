@@ -18,7 +18,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -37,7 +37,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -56,7 +56,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -75,7 +75,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -94,7 +94,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -113,7 +113,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -132,7 +132,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -151,7 +151,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -170,7 +170,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3
 
 python -u run.py \
@@ -189,5 +189,5 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10 \
+  --patience 100 \
   --enc_in 3

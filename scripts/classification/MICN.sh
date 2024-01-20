@@ -19,7 +19,7 @@ python -u run.py \
   --learning_rate 0.001 \
   --train_epochs 100 \
   --c_out 3 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -37,7 +37,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -55,7 +55,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -73,7 +73,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -91,7 +91,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -109,7 +109,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -127,7 +127,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -145,7 +145,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -163,7 +163,7 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100
 
 python -u run.py \
   --task_name classification \
@@ -181,4 +181,4 @@ python -u run.py \
   --itr 1 \
   --learning_rate 0.001 \
   --train_epochs 100 \
-  --patience 10
+  --patience 100

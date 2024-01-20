@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from models.DiffTimesNet.src.model.siren_model.layer import SirenLayer
+from models.DiffTimesNet.src.model.siren_model.layer import SirenLayer, Attention
 
 
 class SirenBlock(nn.Module):
@@ -32,11 +32,14 @@ class SirenBlock(nn.Module):
             stride, padding = 1, 1
 
         self.model = nn.Sequential(*net)
+        self.attn_block = Attention(self.max_num_periods,
+                                    n_heads=1)
 
     def forward(self, x):
         bs, ch, T = x.shape
         x = x.view(-1, 1, T)
         x = self.model(x)
+        x = self.attn_block(x)
         out = x.view(bs, ch, self.max_num_periods, x.shape[-1])
         return out
 
