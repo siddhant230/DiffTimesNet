@@ -91,9 +91,10 @@ class BlockAttention(nn.Module):
         self.attn_block_period = Attention(x_dim[0], n_heads=1)
         self.attn_block_ftrs = Attention(x_dim[1], n_heads=1)
         self.alpha = torch.nn.Parameter(torch.randn((1, 1)))
+        self.beta = torch.nn.Parameter(torch.randn((1, 1)))
 
     def forward(self, x):
         x_p = self.attn_block_period(x.permute(0, 2, 1)).permute(0, 2, 1)
         x_ftrs = self.attn_block_ftrs(x)
-        x_out = self.alpha*x_p + (1-self.alpha)*x_ftrs
+        x_out = self.alpha*x_p + self.beta*x_ftrs
         return x_out
