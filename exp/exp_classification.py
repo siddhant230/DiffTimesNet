@@ -36,7 +36,8 @@ class Exp_Classification(Exp_Basic):
         return data_set, data_loader
 
     def _select_optimizer(self):
-        model_optim = optim.Adam(self.model.parameters(), lr=self.args.learning_rate)
+        model_optim = optim.Adam(
+            self.model.parameters(), lr=self.args.learning_rate)
         return model_optim
 
     def _select_criterion(self):
@@ -67,8 +68,10 @@ class Exp_Classification(Exp_Basic):
 
         preds = torch.cat(preds, 0)
         trues = torch.cat(trues, 0)
-        probs = torch.nn.functional.softmax(preds)  # (total_samples, num_classes) est. prob. for each class and sample
-        predictions = torch.argmax(probs, dim=1).cpu().numpy()  # (total_samples,) int class index for each sample
+        # (total_samples, num_classes) est. prob. for each class and sample
+        probs = torch.nn.functional.softmax(preds)
+        # (total_samples,) int class index for each sample
+        predictions = torch.argmax(probs, dim=1).cpu().numpy()
         trues = trues.flatten().cpu().numpy()
         accuracy = cal_accuracy(predictions, trues)
 
@@ -87,7 +90,8 @@ class Exp_Classification(Exp_Basic):
         time_now = time.time()
 
         train_steps = len(train_loader)
-        early_stopping = EarlyStopping(patience=self.args.patience, verbose=True)
+        early_stopping = EarlyStopping(
+            patience=self.args.patience, verbose=True)
 
         model_optim = self._select_optimizer()
         criterion = self._select_criterion()
@@ -112,10 +116,13 @@ class Exp_Classification(Exp_Basic):
                 train_loss.append(loss.item())
 
                 if (i + 1) % 100 == 0:
-                    print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, loss.item()))
+                    print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(
+                        i + 1, epoch + 1, loss.item()))
                     speed = (time.time() - time_now) / iter_count
-                    left_time = speed * ((self.args.train_epochs - epoch) * train_steps - i)
-                    print('\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time))
+                    left_time = speed * \
+                        ((self.args.train_epochs - epoch) * train_steps - i)
+                    print(
+                        '\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time))
                     iter_count = 0
                     time_now = time.time()
 
@@ -123,10 +130,13 @@ class Exp_Classification(Exp_Basic):
                 nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=4.0)
                 model_optim.step()
 
-            print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
+            print("Epoch: {} cost time: {}".format(
+                epoch + 1, time.time() - epoch_time))
             train_loss = np.average(train_loss)
-            vali_loss, val_accuracy = self.vali(vali_data, vali_loader, criterion)
-            test_loss, test_accuracy = self.vali(test_data, test_loader, criterion)
+            vali_loss, val_accuracy = self.vali(
+                vali_data, vali_loader, criterion)
+            test_loss, test_accuracy = self.vali(
+                test_data, test_loader, criterion)
 
             print(
                 "Epoch: {0}, Steps: {1} | Train Loss: {2:.3f} Vali Loss: {3:.3f} Vali Acc: {4:.3f} Test Loss: {5:.3f} Test Acc: {6:.3f}"
@@ -135,8 +145,8 @@ class Exp_Classification(Exp_Basic):
             if early_stopping.early_stop:
                 print("Early stopping")
                 break
-            if (epoch + 1) % 5 == 0:
-                adjust_learning_rate(model_optim, epoch + 1, self.args)
+            # if (epoch + 1) % 5 == 0:
+            #     adjust_learning_rate(model_optim, epoch + 1, self.args)
 
         best_model_path = path + '/' + 'checkpoint.pth'
         self.model.load_state_dict(torch.load(best_model_path))
@@ -147,7 +157,8 @@ class Exp_Classification(Exp_Basic):
         test_data, test_loader = self._get_data(flag='TEST')
         if test:
             print('loading model')
-            self.model.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'checkpoint.pth')))
+            self.model.load_state_dict(torch.load(os.path.join(
+                './checkpoints/' + setting, 'checkpoint.pth')))
 
         preds = []
         trues = []
@@ -171,8 +182,10 @@ class Exp_Classification(Exp_Basic):
         trues = torch.cat(trues, 0)
         print('test shape:', preds.shape, trues.shape)
 
-        probs = torch.nn.functional.softmax(preds)  # (total_samples, num_classes) est. prob. for each class and sample
-        predictions = torch.argmax(probs, dim=1).cpu().numpy()  # (total_samples,) int class index for each sample
+        # (total_samples, num_classes) est. prob. for each class and sample
+        probs = torch.nn.functional.softmax(preds)
+        # (total_samples,) int class index for each sample
+        predictions = torch.argmax(probs, dim=1).cpu().numpy()
         trues = trues.flatten().cpu().numpy()
         accuracy = cal_accuracy(predictions, trues)
 
@@ -182,8 +195,8 @@ class Exp_Classification(Exp_Basic):
             os.makedirs(folder_path)
 
         print('accuracy:{}'.format(accuracy))
-        file_name='result_classification.txt'
-        f = open(os.path.join(folder_path,file_name), 'a')
+        file_name = 'result_classification.txt'
+        f = open(os.path.join(folder_path, file_name), 'a')
         f.write(setting + "  \n")
         f.write('accuracy:{}'.format(accuracy))
         f.write('\n')
