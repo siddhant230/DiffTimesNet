@@ -11,6 +11,7 @@ from models.DiffTimesNet.src.model.aggregator import Aggregator
 class DiffTimesBlock(nn.Module):
     def __init__(
         self,
+        time_period,
         input_channels=50,
         max_num_periods=5,
         out_channels=128,
@@ -19,7 +20,8 @@ class DiffTimesBlock(nn.Module):
         num_siren_depth=3
     ):
         super().__init__()
-        self.sirenblock = SirenBlock(max_num_periods=max_num_periods,
+        self.sirenblock = SirenBlock(time_period=time_period,
+                                     max_num_periods=max_num_periods,
                                      window_length=max_num_periods,
                                      num_layers=num_siren_depth)
 

@@ -6,7 +6,7 @@ from models.DiffTimesNet.src.model.diff_times_block import DiffTimesBlock
 
 
 class DiffTimesNet(nn.Module):
-    def __init__(self, in_channels=50,
+    def __init__(self, time_period, in_channels=50,
                  out_channels=64,
                  max_num_periods=9,
                  num_res_blocks=4,
@@ -19,6 +19,7 @@ class DiffTimesNet(nn.Module):
         for _ in range(num_res_blocks):
             diff_time_blocks.append(
                 DiffTimesBlock(
+                    time_period=time_period,
                     input_channels=in_channels,
                     max_num_periods=max_num_periods,
                     out_channels=out_channels,
@@ -51,7 +52,8 @@ if __name__ == "__main__":
     reduction_factor = 1
     max_num_periods = (num_res_blocks*(2*reduction_factor))+1
 
-    resnet_obj = DiffTimesNet(in_channels=in_channels,
+    resnet_obj = DiffTimesNet(time_period=T,
+                              in_channels=in_channels,
                               hidden_channels=hidden_channels,
                               max_num_periods=max_num_periods,
                               num_res_blocks=num_res_blocks)

@@ -65,7 +65,6 @@ class Attention(nn.Module):
         self.projection_dropout = nn.Dropout(projection_drop_p)
 
     def forward(self, x):
-        x = x.permute(0, 2, 1)
         n_samples, n_tokens, dims = x.shape
 
         if dims != self.dims:
@@ -83,5 +82,19 @@ class Attention(nn.Module):
         context = context.transpose(1, 2).flatten(2)
         out = self.projection(context)
         out = self.projection_dropout(out)
-        out = out.permute(0, 2, 1)
         return out
+
+
+class BlockAttention(nn.Module):
+    def __init__(self, x_dim):
+        super().__init__()
+        self.attn_block_period = Attention(x_dim[0], n_heads=2)
+        self.attn_block_ftrs = Attention(x_dim[1], n_heads=2)
+        self.alpha = torch.nn.Parameter(torch.randn((1, 1)))
+        print(self.alpha)
+
+    def forward(self, x):
+        x_p = self.attn_block_period(x.permute(0, 2, 1)).permute(0, 2, 1)
+        x_ftrs = self.attn_block_ftrs(x)
+        x_out = self.alpha*x_p + (1-self.alpha)*x_ftrs
+        return x_out

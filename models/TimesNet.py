@@ -23,7 +23,8 @@ class Model(nn.Module):
         # self.model = nn.ModuleList([TimesBlock(configs)
         #                             for _ in range(configs.e_layers)])
 
-        self.model = DiffTimesNet(in_channels=configs.d_model,
+        self.model = DiffTimesNet(time_period=self.seq_len,
+                                  in_channels=configs.d_model,
                                   out_channels=configs.d_ff,
                                   num_res_blocks=configs.e_layers)
 
