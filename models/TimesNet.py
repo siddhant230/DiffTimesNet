@@ -61,7 +61,7 @@ class Model(nn.Module):
         # TimesNet
         # for i in range(self.layer):
         #     enc_out = self.layer_norm(self.model[i](enc_out))
-        enc_out = self.model(enc_out)
+        enc_out, attn_map = self.model(enc_out)
         enc_out = enc_out.permute(0, 2, 1)
         enc_out = self.layer_norm(enc_out)
 
@@ -91,7 +91,7 @@ class Model(nn.Module):
         # TimesNet
         # for i in range(self.layer):
         #     enc_out = self.layer_norm(self.model[i](enc_out))
-        enc_out = self.model(enc_out)
+        enc_out, attn_map = self.model(enc_out)
         enc_out = enc_out.permute(0, 2, 1)
         enc_out = self.layer_norm(enc_out)
 
@@ -117,7 +117,7 @@ class Model(nn.Module):
         enc_out = self.enc_embedding(x_enc, None)  # [B,T,C]
         # TimesNet
         # for i in range(self.layer):
-        enc_out = self.model(enc_out)
+        enc_out, attn_map = self.model(enc_out)
         enc_out = enc_out.permute(0, 2, 1)
         enc_out = self.layer_norm(enc_out)
 
@@ -137,7 +137,7 @@ class Model(nn.Module):
 
         # TimesNet
         # for i in range(self.layer):
-        enc_out = self.model(enc_out)
+        enc_out, attn_map = self.model(enc_out)
         enc_out = enc_out.permute(0, 2, 1)
         enc_out = self.layer_norm(enc_out)
 
@@ -150,20 +150,21 @@ class Model(nn.Module):
         # (batch_size, seq_length * d_model)
         output = output.reshape(output.shape[0], -1)
         output = self.projection(output)  # (batch_size, num_classes)
-        return output
+        return output, attn_map
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
         if self.task_name == 'long_term_forecast' or self.task_name == 'short_term_forecast':
-            dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
-            return dec_out[:, -self.pred_len:, :]  # [B, L, D]
+            dec_out, attn_map = self.forecast(
+                x_enc, x_mark_enc, x_dec, x_mark_dec)
+            return dec_out[:, -self.pred_len:, :], attn_map  # [B, L, D]
         if self.task_name == 'imputation':
-            dec_out = self.imputation(
+            dec_out, attn_map = self.imputation(
                 x_enc, x_mark_enc, x_dec, x_mark_dec, mask)
-            return dec_out  # [B, L, D]
+            return dec_out, attn_map  # [B, L, D]
         if self.task_name == 'anomaly_detection':
-            dec_out = self.anomaly_detection(x_enc)
-            return dec_out  # [B, L, D]
+            dec_out, attn_map = self.anomaly_detection(x_enc)
+            return dec_out, attn_map  # [B, L, D]
         if self.task_name == 'classification':
-            dec_out = self.classification(x_enc, x_mark_enc)
-            return dec_out  # [B, N]
+            dec_out, attn_map = self.classification(x_enc, x_mark_enc)
+            return dec_out, attn_map  # [B, N]
         return None

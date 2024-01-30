@@ -44,8 +44,15 @@ class Exp_Classification(Exp_Basic):
         criterion = nn.CrossEntropyLoss()
         return criterion
 
+    def sparsity_criterion(self, mat, epsilon=1e-6):
+        trace = torch.trace(mat)
+        det = torch.linalg.det(mat)
+        loss = trace/(det + epsilon)
+        return loss
+
     def vali(self, vali_data, vali_loader, criterion):
         total_loss = []
+        total_sparsity_loss = []
         preds = []
         trues = []
         self.model.eval()
@@ -55,16 +62,21 @@ class Exp_Classification(Exp_Basic):
                 padding_mask = padding_mask.float().to(self.device)
                 label = label.to(self.device)
 
-                outputs = self.model(batch_x, padding_mask, None, None)
+                outputs, attn_map = self.model(
+                    batch_x, padding_mask, None, None)
 
                 pred = outputs.detach().cpu()
                 loss = criterion(pred, label.long().squeeze().cpu())
+                sparsity_loss = self.sparsity_criterion(attn_map.cpu())
+
                 total_loss.append(loss)
+                total_sparsity_loss.append(sparsity_loss)
 
                 preds.append(outputs.detach())
                 trues.append(label)
 
         total_loss = np.average(total_loss)
+        total_sparsity_loss = np.average(total_sparsity_loss)
 
         preds = torch.cat(preds, 0)
         trues = torch.cat(trues, 0)
@@ -76,7 +88,7 @@ class Exp_Classification(Exp_Basic):
         accuracy = cal_accuracy(predictions, trues)
 
         self.model.train()
-        return total_loss, accuracy
+        return total_loss, total_sparsity_loss, accuracy
 
     def train(self, setting):
         train_data, train_loader = self._get_data(flag='TRAIN')
@@ -99,6 +111,7 @@ class Exp_Classification(Exp_Basic):
         for epoch in range(self.args.train_epochs):
             iter_count = 0
             train_loss = []
+            total_sparsity_loss = []
 
             self.model.train()
             epoch_time = time.time()
@@ -111,13 +124,16 @@ class Exp_Classification(Exp_Basic):
                 padding_mask = padding_mask.float().to(self.device)
                 label = label.to(self.device)
 
-                outputs = self.model(batch_x, padding_mask, None, None)
+                outputs, attn_map = self.model(
+                    batch_x, padding_mask, None, None)
                 loss = criterion(outputs, label.long().squeeze(-1))
+                sparsity_loss = self.sparsity_criterion(attn_map.cpu())
                 train_loss.append(loss.item())
+                total_sparsity_loss.append(sparsity_loss.item())
 
                 if (i + 1) % 100 == 0:
-                    print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(
-                        i + 1, epoch + 1, loss.item()))
+                    print("\titers: {0}, epoch: {1} | loss: {2:.7f} | sp_loss: {2:.7f}".format(
+                        i + 1, epoch + 1, loss.item()), sparsity_loss.item())
                     speed = (time.time() - time_now) / iter_count
                     left_time = speed * \
                         ((self.args.train_epochs - epoch) * train_steps - i)
@@ -126,21 +142,26 @@ class Exp_Classification(Exp_Basic):
                     iter_count = 0
                     time_now = time.time()
 
+                loss = loss + sparsity_loss
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=4.0)
                 model_optim.step()
 
             print("Epoch: {} cost time: {}".format(
                 epoch + 1, time.time() - epoch_time))
+
             train_loss = np.average(train_loss)
+            total_sparsity_loss = np.average(total_sparsity_loss)
+
             vali_loss, val_accuracy = self.vali(
                 vali_data, vali_loader, criterion)
             test_loss, test_accuracy = self.vali(
                 test_data, test_loader, criterion)
 
             print(
-                "Epoch: {0}, Steps: {1} | Train Loss: {2:.3f} Vali Loss: {3:.3f} Vali Acc: {4:.3f} Test Loss: {5:.3f} Test Acc: {6:.3f}"
-                .format(epoch + 1, train_steps, train_loss, vali_loss, val_accuracy, test_loss, test_accuracy))
+                "Epoch: {0}, Steps: {1} | Train Loss: {2:.3f} sp_loss: {2:.3f} Vali Loss: {3:.3f} Vali Acc: {4:.3f} Test Loss: {5:.3f} Test Acc: {6:.3f}"
+                .format(epoch + 1, train_steps, train_loss, total_sparsity_loss,
+                        vali_loss, val_accuracy, test_loss, test_accuracy))
             early_stopping(-val_accuracy, self.model, path)
             if early_stopping.early_stop:
                 print("Early stopping")
@@ -173,7 +194,7 @@ class Exp_Classification(Exp_Basic):
                 padding_mask = padding_mask.float().to(self.device)
                 label = label.to(self.device)
 
-                outputs = self.model(batch_x, padding_mask, None, None)
+                outputs, _ = self.model(batch_x, padding_mask, None, None)
 
                 preds.append(outputs.detach())
                 trues.append(label)
