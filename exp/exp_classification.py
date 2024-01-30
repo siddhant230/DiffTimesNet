@@ -45,8 +45,9 @@ class Exp_Classification(Exp_Basic):
         return criterion
 
     def sparsity_criterion(self, mat, epsilon=1e-6):
-        trace = torch.trace(mat)
-        det = torch.linalg.det(mat)
+        trace = mat.diagonal(offset=0,
+                             dim1=-1, dim2=-2).sum((-1, 0))
+        det = torch.linalg.det(mat).sum(0)
         loss = trace/(det + epsilon)
         return loss
 
@@ -132,8 +133,8 @@ class Exp_Classification(Exp_Basic):
                 total_sparsity_loss.append(sparsity_loss.item())
 
                 if (i + 1) % 100 == 0:
-                    print("\titers: {0}, epoch: {1} | loss: {2:.7f} | sp_loss: {2:.7f}".format(
-                        i + 1, epoch + 1, loss.item()), sparsity_loss.item())
+                    print("\titers: {0}, epoch: {1} | loss: {2:.7f} | sp_loss: {3:.7f}".format(
+                        i + 1, epoch + 1, loss.item(), sparsity_loss.item()))
                     speed = (time.time() - time_now) / iter_count
                     left_time = speed * \
                         ((self.args.train_epochs - epoch) * train_steps - i)
@@ -153,15 +154,15 @@ class Exp_Classification(Exp_Basic):
             train_loss = np.average(train_loss)
             total_sparsity_loss = np.average(total_sparsity_loss)
 
-            vali_loss, val_accuracy = self.vali(
+            vali_loss, vali_sp_loss, val_accuracy = self.vali(
                 vali_data, vali_loader, criterion)
-            test_loss, test_accuracy = self.vali(
+            test_loss, test_sp_loss, test_accuracy = self.vali(
                 test_data, test_loader, criterion)
 
             print(
-                "Epoch: {0}, Steps: {1} | Train Loss: {2:.3f} sp_loss: {2:.3f} Vali Loss: {3:.3f} Vali Acc: {4:.3f} Test Loss: {5:.3f} Test Acc: {6:.3f}"
+                "Epoch: {0}, Steps: {1} | Train Loss: {2:.3f} train_sp_loss: {3:.3f} Vali Loss: {4:.3f} Vali_sp_loss: {5:.3f} Vali Acc: {6:.3f} Test Loss: {7:.3f} Test Acc: {8:.3f}"
                 .format(epoch + 1, train_steps, train_loss, total_sparsity_loss,
-                        vali_loss, val_accuracy, test_loss, test_accuracy))
+                        vali_loss, vali_sp_loss, val_accuracy, test_loss, test_accuracy))
             early_stopping(-val_accuracy, self.model, path)
             if early_stopping.early_stop:
                 print("Early stopping")

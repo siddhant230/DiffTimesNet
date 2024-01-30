@@ -38,8 +38,9 @@ class DiffTimesBlock(nn.Module):
         return seq
 
     def forward(self, x, attn_map=None):
+        if isinstance(x, tuple):
+            x, attn_map = x
         B, N, T = x.shape
-
         y, attn_map = self.sirenblock(x)
         y = self.conv_net(y)
         y = self.agg(y)
