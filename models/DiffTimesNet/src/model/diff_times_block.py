@@ -37,7 +37,7 @@ class DiffTimesBlock(nn.Module):
         seq = F.pad(input=seq, pad=(0, delta, 0, 0), mode='constant', value=0)
         return seq
 
-    def forward(self, x):
+    def forward(self, x, attn_map=None):
         B, N, T = x.shape
 
         y, attn_map = self.sirenblock(x)

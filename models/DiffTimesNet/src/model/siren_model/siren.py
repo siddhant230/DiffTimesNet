@@ -42,14 +42,14 @@ class SirenBlock(nn.Module):
         x_prime = ((x0 - kernel + 2*pad)/stride)+1
         return int(x_prime)
 
-    def forward(self, x):
+    def forward(self, x, attn_map=None):
         bs, ch, T = x.shape
         x = x.view(-1, 1, T)
         x = self.model(x)  # (b*x, ch, time)
         x, attn_map = self.block_attention(x)
         out = x.view(bs, ch, self.max_num_periods, x.shape[-1])
 
-        return out, sparse_loss
+        return out, attn_map
 
 
 if __name__ == '__main__':
