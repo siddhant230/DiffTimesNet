@@ -46,10 +46,10 @@ class SirenBlock(nn.Module):
         bs, ch, T = x.shape
         x = x.view(-1, 1, T)
         x = self.model(x)  # (b*x, ch, time)
-        x = self.block_attention(x)
+        x, attn_map = self.block_attention(x)
         out = x.view(bs, ch, self.max_num_periods, x.shape[-1])
 
-        return out
+        return out, sparse_loss
 
 
 if __name__ == '__main__':

@@ -33,9 +33,9 @@ class DiffTimesNet(nn.Module):
 
     def forward(self, x):
         x = x.permute(0, 2, 1)  # (B, T, C) -> (B, C, T)
-        x = self.model(x)
+        x, attn_map = self.model(x)
         x = x.permute(0, 1, 2)  # (B, C, T) -> (B, T, C)
-        return x
+        return x, attn_map
 
 
 if __name__ == "__main__":

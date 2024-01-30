@@ -40,13 +40,13 @@ class DiffTimesBlock(nn.Module):
     def forward(self, x):
         B, N, T = x.shape
 
-        y = self.sirenblock(x)
+        y, attn_map = self.sirenblock(x)
         y = self.conv_net(y)
         y = self.agg(y)
         y = self.pad_sequence_util(y, x.shape[-1])
         y = y[:, :, :T]
         y = x + y
-        return y
+        return y, attn_map
 
 
 if __name__ == "__main__":

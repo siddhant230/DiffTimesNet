@@ -81,7 +81,8 @@ class Attention(nn.Module):
         ) * self.scale  # (n_samples, n_heads, n_patches + 1, n_patches + 1)
         # (n_samples, n_heads, n_patches + 1, n_patches + 1)
         attn = dp.softmax(dim=-1)
-        attn = self.attn_drop(attn)
+        # TODO : sparsity loss calc to be here
+        # attn = self.attn_drop(attn)
 
         weighted_avg = attn @ v
         weighted_avg = weighted_avg.transpose(
@@ -89,13 +90,13 @@ class Attention(nn.Module):
         weighted_avg = weighted_avg.flatten(2)
         x = self.proj(weighted_avg)
         x = self.proj_drop(x)
-        return x
+        return x, attn
 
 
 class BlockAttention(nn.Module):
     def __init__(self, x_dim):
         super().__init__()
-        self.attn_block_period = Attention(x_dim[0], n_heads=2)
+        self.attn_block_period = Attention(x_dim[0], n_heads=1)
         # self.attn_block_ftrs = Attention(x_dim[1], n_heads=2)
         self.alpha = torch.nn.Parameter(torch.randn((1, 1)))
         # self.beta = torch.nn.Parameter(torch.randn((1, 1)))
