@@ -31,3 +31,18 @@ python get_data.py
 ```bash ./scripts/anomaly_detection/PSM/TimesNet.sh```
 #### classification
 ```bash ./scripts/classification/TimesNet.sh```
+
+
+| Exp Name              | acc-BENCHMARK | Max Accuracy |
+| --------------------- | ------------- | ------------ |
+| EthanolConcentration  | 35.7          | 33.84        |
+| FaceDetection         | 68.6          | 66.26        |
+| Handwriting           | 32.1          | 30.24        |
+| Heartbeat             | 78.0          | 76.59        |
+| JapaneseVowels        | 98.4          | 97.84        |
+| PEMS-SF               | 89.6          | 86.71        |
+| SelfRegulationSCP1    | 91.8          | 90.78        |
+| SelfRegulationSCP2    | 57.2          | 60.00        |
+| SpokenArabicDigits    | 99.0          | 98.68        |
+| UWaveGestureLibrary   | 85.3          | 86.88        |
+| **Average\_Accuracy** | **73.6**      | **71.54**    |
