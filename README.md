@@ -33,7 +33,7 @@ python get_data.py
 ```bash ./scripts/classification/TimesNet.sh```
 
 
-| Exp Name              | acc-BENCHMARK | Max Accuracy |
+| Exp Name              | acc-BENCHMARK | Our Accuracy |
 | --------------------- | ------------- | ------------ |
 | EthanolConcentration  | 35.7          | 33.84        |
 | FaceDetection         | 68.6          | 66.26        |
